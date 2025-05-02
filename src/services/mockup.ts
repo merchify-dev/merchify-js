@@ -22,12 +22,12 @@ export class MockupServiceImpl implements MockupService {
 
   constructor(
     accountId: string,
-    clientId: string,
-    isDevelopment: boolean = process.env.NODE_ENV === "development",
+    clientId: string
+    // isDevelopment: boolean = process.env.NODE_ENV === "development",
   ) {
     this.accountId = accountId;
     this.clientId = clientId;
-    this.urls = isDevelopment ? API_URLS.development : API_URLS.production;
+    this.urls = API_URLS.production; // isDevelopment ? API_URLS.development : API_URLS.production;
     this.signatureCache = new SignatureCache();
   }
 
@@ -37,7 +37,7 @@ export class MockupServiceImpl implements MockupService {
   private normalizeRelativeUrl(url: string): string {
     if (url.startsWith("http")) {
       throw new Error(
-        'URL must be relative. Please provide a URL that starts with "/" instead of a full URL.',
+        'URL must be relative. Please provide a URL that starts with "/" instead of a full URL.'
       );
     }
     return url.startsWith("/") ? url : "/" + url;
@@ -85,32 +85,38 @@ export class MockupServiceImpl implements MockupService {
         // For cached signatures, we build the full URL
         const signedRelativeUrl = this.addSignatureToUrl(
           urlWithAccountId,
-          cachedSignature,
+          cachedSignature
         );
         return this.toAbsoluteUrl(signedRelativeUrl);
       }
 
+      console.log("v0.0.7: urlSignerEndpoint:", this.urls.urlSignerEndpoint);
+
       // Request new signature
-      const signerEndpoint = `${this.urls.urlSignerEndpoint}?url=${encodeURIComponent(urlWithAccountId)}&clientId=${encodeURIComponent(this.clientId)}`;
+      const signerEndpoint = `${
+        this.urls.urlSignerEndpoint
+      }?url=${encodeURIComponent(
+        urlWithAccountId
+      )}&clientId=${encodeURIComponent(this.clientId)}`;
       const response = await fetch(signerEndpoint, {
         method: "GET",
         headers: {
           Accept: "application/json",
-          "X-Client-ID": this.clientId,
+          // "X-Client-ID": this.clientId,
         },
       });
 
       if (!response.ok) {
         const errorText = await response.text().catch(() => "");
         throw new Error(
-          `URL signing failed: ${response.status} ${response.statusText} ${errorText}`,
+          `URL signing failed: ${response.status} ${response.statusText} ${errorText}`
         );
       }
 
       const data = await response.json();
       if (!data?.signature || !data?.urlWithSignature) {
         throw new Error(
-          "Invalid response from signer service - missing signature or urlWithSignature",
+          "Invalid response from signer service - missing signature or urlWithSignature"
         );
       }
 
@@ -159,7 +165,7 @@ export class MockupServiceImpl implements MockupService {
   private validateMockupInput(input: GetMockupUrlInput): void {
     if (!input.design || input.design.length === 0 || !input.product) {
       throw new Error(
-        "Invalid input: at least one design image and product details are required",
+        "Invalid input: at least one design image and product details are required"
       );
     }
 
@@ -167,11 +173,11 @@ export class MockupServiceImpl implements MockupService {
       !input.design.every(
         (img: DesignElement) =>
           (img.type === "image" && img.imageUrl) ||
-          (img.type === "color" && img.hex),
+          (img.type === "color" && img.hex)
       )
     ) {
       throw new Error(
-        "Each design image must have either an imageUrl or hex color",
+        "Each design image must have either an imageUrl or hex color"
       );
     }
 
@@ -187,7 +193,13 @@ export class MockupServiceImpl implements MockupService {
     const designBase64 = btoa(JSON.stringify(input.design));
     const encodedDesign = encodeURIComponent(designBase64);
 
-    let mockupUrl = `/mockup?productId=${encodeURIComponent(input.product.productId)}&mockupId=${encodeURIComponent(input.product.mockupId)}&variantId=${encodeURIComponent(input.product.variantId || "VtPGZi")}&design=${encodedDesign}`;
+    let mockupUrl = `/mockup?productId=${encodeURIComponent(
+      input.product.productId
+    )}&mockupId=${encodeURIComponent(
+      input.product.mockupId
+    )}&variantId=${encodeURIComponent(
+      input.product.variantId || "VtPGZi"
+    )}&design=${encodedDesign}`;
 
     if (input.product.width) {
       mockupUrl += `&width=${input.product.width}`;

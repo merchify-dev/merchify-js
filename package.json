@@ -1,6 +1,6 @@
 {
     "name": "merchify",
-    "version": "0.0.1",
+    "version": "0.0.7",
     "description": "Merchify Javascript SDK",
     "private": false,
     "type": "module",

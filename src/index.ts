@@ -12,7 +12,7 @@ export * from "./types/index";
 export function createClient(options: ClientOptions): MerchifyClient {
   // Only log in development and non-production environments
   if (process.env.NODE_ENV !== "production") {
-    console.log("Initializing Merchify Web SDK Client dude");
+    console.log("Initializing Merchify Web SDK Client v0.0.7 dude");
   }
 
   // Validate required fields
@@ -30,7 +30,7 @@ export function createClient(options: ClientOptions): MerchifyClient {
   // Create mockup service instance
   const mockupService = new MockupServiceImpl(
     options.accountId,
-    options.clientId,
+    options.clientId
   );
 
   console.log("Mockup service created:", mockupService);

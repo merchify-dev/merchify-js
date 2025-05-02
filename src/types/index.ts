@@ -53,8 +53,12 @@ export interface Mockup {
   id: string;
   mockup_id: string;
   global_variant_ids: string[];
+  gvids: string[];
+  width: number;
+  height: number;
   variants: Array<{
     global_variant_id: string;
+    gvid: string;
     variant_id_for_mockups: string;
   }>;
   placements: Array<Placement>;

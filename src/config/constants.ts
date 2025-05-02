@@ -1,12 +1,13 @@
 export const API_URLS = {
   production: {
     apiUrl: "https://api.merchify.io",
-    mockupApiUrl: "https://api.merchify.io/v1/mockups/",
-    urlSignerEndpoint: "https://api.merchify.io/v1/url-signer/sign",
+    mockupApiUrl: "https://i.merchify.io",
+    urlSignerEndpoint: "https://s.merchify.io/sign",
   },
   development: {
     apiUrl: "http://localhost:8080",
-    mockupApiUrl: "http://localhost:8089",
+    // mockupApiUrl: "http://162.255.23.80:8089",
+    mockupApiUrl: "https://i.merchify.io",
     urlSignerEndpoint: "http://localhost:8102/sign",
   },
 };

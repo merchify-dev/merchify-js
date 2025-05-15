@@ -33,7 +33,6 @@ const merchifyClient = createClient({
   apiUrl: "https://api.merchify.example.com",
   mockupApiUrl: "https://mockup-api.merchify.example.com",
   accountId: "your-account-id",
-  clientId: "your-client-id",
 });
 
 // Generate a mockup
@@ -77,7 +76,6 @@ export function useMerchifyClient() {
       apiUrl: "YOUR_API_URL",
       mockupApiUrl: "YOUR_MOCKUP_API_URL",
       accountId: "YOUR_ACCOUNT_ID",
-      clientId: "YOUR_CLIENT_ID",
     });
   }, []);
 
@@ -175,7 +173,6 @@ interface ClientConfig {
   apiUrl: string;
   mockupApiUrl: string;
   accountId: string;
-  clientId: string;
 }
 ```
 
@@ -253,12 +250,10 @@ interface Product {
   mockups?: Array<{
     id: string;
     mockup_id: string;
-    global_variant_ids: string[];
     gvids: string[];
     width: number;
     height: number;
     variants: Array<{
-      global_variant_id: string;
       gvid: string;
       variant_id_for_mockups: string;
     }>;

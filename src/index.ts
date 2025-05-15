@@ -20,18 +20,14 @@ export function createClient(options: ClientOptions): MerchifyClient {
     console.error("accountId is required");
     throw new Error("accountId is required");
   }
-  if (!options.clientId) {
-    console.error("clientId is required");
-    throw new Error("clientId is required");
-  }
 
   console.log("Creating Merchify Web SDK Client with options:", options);
 
   // Create mockup service instance
-  const mockupService = new MockupServiceImpl(
-    options.accountId,
-    options.clientId
-  );
+  const mockupService = new MockupServiceImpl({
+    accountId: options.accountId,
+    urls: options.urls,
+  });
 
   console.log("Mockup service created:", mockupService);
 

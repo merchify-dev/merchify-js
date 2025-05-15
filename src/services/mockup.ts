@@ -8,10 +8,17 @@ import type {
   RateLimitInfo,
 } from "../types/index";
 
+interface MockupServiceOptions {
+  accountId: string;
+  urls?: Partial<{
+    image: string;
+    signer: string;
+  }>;
+}
+
 export class MockupServiceImpl implements MockupService {
-  private urls: typeof API_URLS.production | typeof API_URLS.development;
+  private urls: { image: string; signer: string };
   private accountId: string;
-  private clientId: string;
   private signatureCache: SignatureCache;
   private rateInfo = {
     perMinute: 0,
@@ -20,14 +27,12 @@ export class MockupServiceImpl implements MockupService {
   };
   private queueLength = 0;
 
-  constructor(
-    accountId: string,
-    clientId: string
-    // isDevelopment: boolean = process.env.NODE_ENV === "development",
-  ) {
-    this.accountId = accountId;
-    this.clientId = clientId;
-    this.urls = API_URLS.production; // isDevelopment ? API_URLS.development : API_URLS.production;
+  constructor(options: MockupServiceOptions) {
+    this.accountId = options.accountId;
+    this.urls = {
+      image: options.urls?.image || API_URLS.production.mockupApiUrl,
+      signer: options.urls?.signer || API_URLS.production.urlSignerEndpoint,
+    };
     this.signatureCache = new SignatureCache();
   }
 
@@ -48,8 +53,8 @@ export class MockupServiceImpl implements MockupService {
    */
   private toAbsoluteUrl(relativeUrl: string): string {
     return relativeUrl.startsWith("/")
-      ? `${this.urls.mockupApiUrl}${relativeUrl}`
-      : `${this.urls.mockupApiUrl}/${relativeUrl}`;
+      ? `${this.urls.image}${relativeUrl}`
+      : `${this.urls.image}/${relativeUrl}`;
   }
 
   /**
@@ -90,19 +95,16 @@ export class MockupServiceImpl implements MockupService {
         return this.toAbsoluteUrl(signedRelativeUrl);
       }
 
-      console.log("v0.0.7: urlSignerEndpoint:", this.urls.urlSignerEndpoint);
+      console.log("v0.0.7: urlSignerEndpoint:", this.urls.signer);
 
       // Request new signature
-      const signerEndpoint = `${
-        this.urls.urlSignerEndpoint
-      }?url=${encodeURIComponent(
+      const signerEndpoint = `${this.urls.signer}?url=${encodeURIComponent(
         urlWithAccountId
-      )}&clientId=${encodeURIComponent(this.clientId)}`;
+      )}`;
       const response = await fetch(signerEndpoint, {
         method: "GET",
         headers: {
           Accept: "application/json",
-          // "X-Client-ID": this.clientId,
         },
       });
 

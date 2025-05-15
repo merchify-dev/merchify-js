@@ -52,12 +52,10 @@ export type DesignElement = ColorDesignElement | ImageDesignElement;
 export interface Mockup {
   id: string;
   mockup_id: string;
-  global_variant_ids: string[];
   gvids: string[];
   width: number;
   height: number;
   variants: Array<{
-    global_variant_id: string;
     gvid: string;
     variant_id_for_mockups: string;
   }>;
@@ -74,7 +72,7 @@ export interface Attribute {
 }
 
 export interface ProductVariant {
-  global_variant_id: string;
+  gvid: string;
   variant_id_for_mockups: string;
   variant_placements: Array<Placement>;
 }
@@ -93,6 +91,17 @@ export interface ProductOptions {
   selected?: Record<string, string>;
 }
 
+export interface Photo {
+  id: string;
+  title: string;
+  raws: {
+    guid: string;
+    file_extension: string;
+    width?: number;
+    height?: number;
+  };
+}
+
 export interface ProductFromMerchify {
   id: string;
   name: string;
@@ -101,14 +110,7 @@ export interface ProductFromMerchify {
   placements: Array<Placement>;
   options?: ProductOptions;
   price: number;
-  photos?: Array<{
-    id: string;
-    title: string;
-    raws: {
-      guid: string;
-      file_extension: string;
-    };
-  }>;
+  photos?: Photo[];
 }
 
 export interface SelectedCombination {
@@ -124,16 +126,17 @@ export interface Product {
   placements?: Array<Placement>;
   variants?: Array<ProductVariant>;
   mockups?: Array<Mockup>;
+  photos?: Photo[];
   price: number;
   json: any; // This should be typed properly based on the actual data structure
 }
 
 export interface ClientOptions {
   accountId: string; // Account ID for URL signing
-  clientId: string; // Client ID for authentication
-  apiUrl?: string;
-  urlSignerEndpoint?: string;
-  mockupApiUrl?: string;
+  urls?: {
+    image: string; // formerly mockupApiUrl
+    signer: string; // formerly urlSignerEndpoint
+  };
 }
 
 export interface GetMockupUrlInput {
@@ -170,4 +173,8 @@ export interface MockupService {
 export interface MerchifyClient {
   mockups: MockupService;
   getConfig(): ClientOptions;
+}
+
+export interface ImageAlignmentRule {
+  // ... existing code ...
 }

@@ -50,35 +50,26 @@ describe("Merchify Web SDK Client", () => {
   it("should create a client with required options", () => {
     const client = createClient({
       accountId: "test-account",
-      clientId: "test-client",
     });
 
     expect(client).toBeDefined();
     expect(client.mockups).toBeDefined();
     expect(client.getConfig()).toEqual({
       accountId: "test-account",
-      clientId: "test-client",
     });
   });
 
   it("should throw error if accountId is missing", () => {
     expect(() =>
-      // @ts-expect-error Testing intentional misuse
-      createClient({ clientId: "test-client" }),
+      createClient({
+        // accountId is missing
+      } as any)
     ).toThrow("accountId is required");
-  });
-
-  it("should throw error if clientId is missing", () => {
-    expect(() =>
-      // @ts-expect-error Testing intentional misuse
-      createClient({ accountId: "test-account" }),
-    ).toThrow("clientId is required");
   });
 
   it("should include accountId in the URL being signed", async () => {
     const client = createClient({
       accountId: "test-account-123",
-      clientId: "test-client-456",
     });
 
     // Set up test input
@@ -122,8 +113,5 @@ describe("Merchify Web SDK Client", () => {
 
     // The URL parameter should NOT contain accountId as a separate parameter
     expect(fetchUrl).not.toContain("&accountId=");
-
-    // But it should still include clientId
-    expect(fetchUrl).toContain("clientId=test-client-456");
   });
 });
